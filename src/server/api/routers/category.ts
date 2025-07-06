@@ -143,7 +143,7 @@ export const categoryRouter = createTRPCRouter({
           counter++;
         }
         
-        (updateData as any).slug = slug;
+        (updateData as { slug?: string }).slug = slug;
       }
 
       return ctx.db.category.update({

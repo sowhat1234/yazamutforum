@@ -117,6 +117,97 @@ enum VoteType {
     DOWN
 }
 
+// MVP Models for Idea Platform
+model Idea {
+    id          String    @id @default(cuid())
+    title       String
+    description String    @db.Text // Rich text as HTML
+    category    IdeaCategory
+    tags        String[]
+    
+    // Simple engagement
+    upvotes     Int       @default(0)
+    downvotes   Int       @default(0)
+    
+    // Team formation (simple)
+    wantsTeam   Boolean   @default(false)
+    neededSkills String[] // What skills are needed
+    
+    author      User      @relation(fields: [authorId], references: [id])
+    authorId    String
+    comments    Comment[]
+    votes       Vote[]
+    interests   Interest[] // Users interested in joining team
+    
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    
+    @@index([authorId])
+    @@index([category])
+    @@index([createdAt])
+    @@index([wantsTeam])
+}
+
+model Comment {
+    id        String   @id @default(cuid())
+    content   String
+    
+    author    User     @relation(fields: [authorId], references: [id])
+    authorId  String
+    idea      Idea     @relation(fields: [ideaId], references: [id])
+    ideaId    String
+    
+    // Simple threading
+    parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+    parentId  String?
+    replies   Comment[] @relation("CommentReplies")
+    
+    createdAt DateTime @default(now())
+    
+    @@index([ideaId])
+    @@index([authorId])
+    @@index([parentId])
+}
+
+model Vote {
+    id     String    @id @default(cuid())
+    type   VoteType  // UP or DOWN
+    
+    user   User      @relation(fields: [userId], references: [id])
+    userId String
+    idea   Idea      @relation(fields: [ideaId], references: [id])
+    ideaId String
+    
+    @@unique([userId, ideaId])
+    @@index([ideaId])
+    @@index([userId])
+}
+
+model Interest {
+    id      String @id @default(cuid())
+    message String? // Optional message when showing interest
+    
+    user    User   @relation(fields: [userId], references: [id])
+    userId  String
+    idea    Idea   @relation(fields: [ideaId], references: [id])
+    ideaId  String
+    
+    createdAt DateTime @default(now())
+    
+    @@unique([userId, ideaId])
+    @@index([ideaId])
+    @@index([userId])
+}
+
+enum IdeaCategory {
+    SAAS
+    MOBILE_APP
+    WEB_APP
+    HARDWARE
+    SERVICE
+    OTHER
+}
+
 // Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())
@@ -148,10 +239,13 @@ model Session {
 model User {
     id            String    @id @default(cuid())
     name          String?
+    username      String?   @unique
     email         String?   @unique
     emailVerified DateTime?
     image         String?
     bio           String?
+    skills        String[]  // User skills for team formation
+    password      String?   // For credentials authentication
     role          UserRole  @default(USER)
     createdAt     DateTime  @default(now())
     updatedAt     DateTime  @updatedAt
@@ -162,6 +256,12 @@ model User {
     replies       Reply[]
     postVotes     PostVote[]
     replyVotes    ReplyVote[]
+    
+    // MVP relations
+    ideas         Idea[]
+    comments      Comment[]
+    votes         Vote[]
+    interests     Interest[]
 }
 
 enum UserRole {

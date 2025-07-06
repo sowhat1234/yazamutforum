@@ -222,6 +222,16 @@ export const postRouter = createTRPCRouter({
       }
     }),
 
+  // Get latest post for current user
+  getLatest: protectedProcedure.query(async ({ ctx }) => {
+    const post = await ctx.db.post.findFirst({
+      where: { authorId: ctx.session.user.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return post;
+  }),
+
   // Legacy endpoints for backward compatibility
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
