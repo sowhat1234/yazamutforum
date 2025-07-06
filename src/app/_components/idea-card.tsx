@@ -110,7 +110,7 @@ export function IdeaCard({ idea, currentUserId }: IdeaCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+    <div className="bg-gradient-to-r from-indigo-50 via-white to-indigo-50 rounded-lg shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-shadow">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -128,7 +128,7 @@ export function IdeaCard({ idea, currentUserId }: IdeaCardProps) {
             )}
             <div>
               <p className="font-medium text-gray-900">
-                {idea.author.name ?? idea.author.username ?? "Anonymous"}
+                {idea.author.name ?? idea.author.username ?? "Anonymous User"}
               </p>
               <p className="text-sm text-gray-500 flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
@@ -261,7 +261,7 @@ export function IdeaCard({ idea, currentUserId }: IdeaCardProps) {
           <button
             onClick={handleInterest}
             disabled={interestMutation.isPending || removeInterestMutation.isPending}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:shadow-md ${
               isInterested
                 ? "bg-orange-100 text-orange-800 hover:bg-orange-200"
                 : "bg-orange-500 text-white hover:bg-orange-600"

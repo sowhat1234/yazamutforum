@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Search, Plus } from "lucide-react";
 
 import { api } from "~/trpc/react";
-import { IdeaCard } from "./idea-card";
+import { ModernIdeaCard } from "~/components/ui/modern-idea-card";
 import { Modal } from "./modal";
 import { IdeaForm } from "./idea-form";
 
@@ -48,13 +48,36 @@ export function IdeaFeed({ currentUserId }: IdeaFeedProps) {
     { value: "OTHER", label: "Other" },
   ];
 
+  const utils = api.useUtils();
+  
+  const voteMutation = api.idea.vote.useMutation({
+    onSuccess: () => {
+      void utils.idea.getAll.invalidate();
+    },
+  });
+
+  const interestMutation = api.idea.showInterest.useMutation({
+    onSuccess: () => {
+      void utils.idea.getAll.invalidate();
+    },
+  });
+
+  const handleVote = (ideaId: string, type: "UP" | "DOWN") => {
+    voteMutation.mutate({ ideaId, type });
+  };
+
+  const handleInterest = (ideaId: string) => {
+    interestMutation.mutate({ ideaId });
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+      <div className="max-w-4xl mx-auto p-6">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Idea Feed</h1>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Idea Feed</h1>
             <p className="text-gray-600 mt-2">
               Discover innovative ideas and find your next project to build
             </p>
@@ -63,16 +86,16 @@ export function IdeaFeed({ currentUserId }: IdeaFeedProps) {
           {currentUserId && (
             <button 
               onClick={() => setIsIdeaFormOpen(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-5 h-5" />
               Post Idea
             </button>
           )}
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-6 mb-8">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Search */}
             <div className="flex-1">
@@ -142,11 +165,14 @@ export function IdeaFeed({ currentUserId }: IdeaFeedProps) {
           </div>
         ) : ideas.length > 0 ? (
           <>
-            {ideas.map((idea) => (
-              <IdeaCard 
+            {ideas.map((idea, index) => (
+              <ModernIdeaCard 
                 key={idea.id} 
                 idea={idea} 
                 currentUserId={currentUserId}
+                onVote={handleVote}
+                onInterest={handleInterest}
+                className={`transition-all duration-300 delay-[${index * 100}ms]`}
               />
             ))}
             
@@ -156,7 +182,7 @@ export function IdeaFeed({ currentUserId }: IdeaFeedProps) {
                 <button
                   onClick={() => fetchNextPage()}
                   disabled={isFetchingNextPage}
-                  className="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
+                  className="bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 px-8 py-4 rounded-xl font-medium hover:from-slate-200 hover:to-slate-300 transition-all duration-300 disabled:opacity-50 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   {isFetchingNextPage ? "Loading..." : "Load More Ideas"}
                 </button>
@@ -177,7 +203,7 @@ export function IdeaFeed({ currentUserId }: IdeaFeedProps) {
             {currentUserId && (
               <button 
                 onClick={() => setIsIdeaFormOpen(true)}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 Post the First Idea
               </button>
@@ -196,6 +222,7 @@ export function IdeaFeed({ currentUserId }: IdeaFeedProps) {
           onSuccess={() => setIsIdeaFormOpen(false)}
         />
       </Modal>
+      </div>
     </div>
   );
 }
