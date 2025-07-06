@@ -25,9 +25,6 @@ declare module "next-auth" {
   }
 
   interface User {
-    id: string;
-    email?: string | null;
-    name?: string | null;
     username?: string | null;
     // ...other properties
     // role: UserRole;
