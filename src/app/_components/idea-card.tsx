@@ -261,7 +261,7 @@ export function IdeaCard({ idea, currentUserId }: IdeaCardProps) {
           <button
             onClick={handleInterest}
             disabled={interestMutation.isPending || removeInterestMutation.isPending}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:shadow-md ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:shadow-md ${
               isInterested
                 ? "bg-orange-100 text-orange-800 hover:bg-orange-200"
                 : "bg-orange-500 text-white hover:bg-orange-600"

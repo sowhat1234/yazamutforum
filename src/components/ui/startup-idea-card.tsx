@@ -68,7 +68,7 @@ function StartupIdeaCard({
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-2">
-            {icon || categoryIcons[category as keyof typeof categoryIcons] || <Lightbulb className="w-5 h-5 text-primary" />}
+            {icon ?? categoryIcons[category as keyof typeof categoryIcons] ?? <Lightbulb className="w-5 h-5 text-primary" />}
             <span className="text-sm font-medium text-muted-foreground">{category}</span>
           </div>
           <div className="flex items-center gap-2">

@@ -48,7 +48,7 @@ const ModernIdeaCard = React.forwardRef<HTMLDivElement, ModernIdeaCardProps>(
     onInterest,
     className,
     ...props
-  }, ref) => {
+  }, _ref) => {
     const [isHovered, setIsHovered] = React.useState(false)
     const [userVote, setUserVote] = React.useState<"UP" | "DOWN" | null>(null)
     const [isInterested, setIsInterested] = React.useState(false)
@@ -160,17 +160,17 @@ const ModernIdeaCard = React.forwardRef<HTMLDivElement, ModernIdeaCardProps>(
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3">
               <Avatar className="h-10 w-10 ring-2 ring-primary/20">
-                <AvatarImage src={idea.author.image || undefined} alt={idea.author.name || "User"} />
+                <AvatarImage src={idea.author.image ?? undefined} alt={idea.author.name ?? "User"} />
                 <AvatarFallback>
                   <User className="h-5 w-5" />
                 </AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-semibold text-foreground">
-                  {idea.author.name || idea.author.username || "Anonymous User"}
+                  {idea.author.name ?? idea.author.username ?? "Anonymous User"}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  @{idea.author.username || "anonymous"}
+                  @{idea.author.username ?? "anonymous"}
                 </p>
               </div>
             </div>
@@ -354,7 +354,7 @@ const ModernIdeaCard = React.forwardRef<HTMLDivElement, ModernIdeaCardProps>(
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {[...Array(6)].map((_, i) => (
+              {Array.from({ length: 6 }, (_, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-1 h-1 bg-primary/60 rounded-full"

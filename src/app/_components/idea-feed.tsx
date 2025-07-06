@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Search, Plus } from "lucide-react";
 
 import { api } from "~/trpc/react";
-import { ModernIdeaCard } from "~/components/ui/modern-idea-card";
+import { ModernIdeaCard } from "@/components/ui/modern-idea-card";
 import { Modal } from "./modal";
 import { IdeaForm } from "./idea-form";
 
