@@ -1,6 +1,21 @@
-# Create T3 App
+# YazamutForum
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A modern forum application built with the [T3 Stack](https://create.t3.gg/) - bootstrapped with `create-t3-app`.
+
+## 🚀 Live Demo
+
+**GitHub Repository:** https://github.com/sowhat1234/yazamutforum
+
+## ✅ Setup Status
+
+- ✅ T3 Stack project created
+- ✅ Environment variables configured 
+- ✅ PostgreSQL database setup with Docker
+- ✅ Prisma migrations applied
+- ✅ GitHub repository created and deployed
+- ✅ Development server tested and working
+
+## 🛠️ Tech Stack
 
 ## What's next? How do I make an app with this?
 
