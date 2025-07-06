@@ -14,16 +14,107 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model Category {
+    id          String   @id @default(cuid())
+    name        String   @unique
+    description String?
+    slug        String   @unique
+    color       String   @default("#3b82f6")
+    isActive    Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    posts       Post[]
+
+    @@index([slug])
+}
+
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
+    id          String   @id @default(cuid())
+    title       String
+    content     String   @db.Text
+    slug        String   @unique
+    isLocked    Boolean  @default(false)
+    isPinned    Boolean  @default(false)
+    viewCount   Int      @default(0)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    categoryId  String
+    category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    
+    authorId    String
+    author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    
+    replies     Reply[]
+    votes       PostVote[]
+
+    @@index([categoryId])
+    @@index([authorId])
+    @@index([createdAt])
+    @@index([slug])
+}
+
+model Reply {
+    id        String   @id @default(cuid())
+    content   String   @db.Text
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
+    postId    String
+    post      Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+    
+    authorId  String
+    author    User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    
+    parentId  String?
+    parent    Reply? @relation("ReplyToReply", fields: [parentId], references: [id])
+    children  Reply[] @relation("ReplyToReply")
+    
+    votes     ReplyVote[]
 
-    @@index([name])
+    @@index([postId])
+    @@index([authorId])
+    @@index([parentId])
+}
+
+model PostVote {
+    id     String @id @default(cuid())
+    type   VoteType
+    
+    postId String
+    post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+    
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    createdAt DateTime @default(now())
+
+    @@unique([postId, userId])
+    @@index([postId])
+    @@index([userId])
+}
+
+model ReplyVote {
+    id      String @id @default(cuid())
+    type    VoteType
+    
+    replyId String
+    reply   Reply  @relation(fields: [replyId], references: [id], onDelete: Cascade)
+    
+    userId  String
+    user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    createdAt DateTime @default(now())
+
+    @@unique([replyId, userId])
+    @@index([replyId])
+    @@index([userId])
+}
+
+enum VoteType {
+    UP
+    DOWN
 }
 
 // Necessary for Next auth
@@ -60,9 +151,23 @@ model User {
     email         String?   @unique
     emailVerified DateTime?
     image         String?
+    bio           String?
+    role          UserRole  @default(USER)
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    replies       Reply[]
+    postVotes     PostVote[]
+    replyVotes    ReplyVote[]
+}
+
+enum UserRole {
+    ADMIN
+    MODERATOR
+    USER
 }
 
 model VerificationToken {
