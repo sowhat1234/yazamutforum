@@ -24,10 +24,14 @@ declare module "next-auth" {
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    id: string;
+    email?: string | null;
+    name?: string | null;
+    username?: string | null;
+    // ...other properties
+    // role: UserRole;
+  }
 }
 
 /**
@@ -100,7 +104,7 @@ export const authConfig = {
     jwt: ({ token, user }) => {
       if (user) {
         token.id = user.id;
-        token.username = user.username;
+        token.username = (user as any).username;
       }
       return token;
     },
